@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>/Walkthrough: LGDroid Android Forensics Lab</title>
+
+  <link rel="stylesheet" href="./../styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <button class="back-button" onclick="goBack()">&larr; cd ..</button>
+
+      <main class="container">
+        <section>
+          <h1 class="display-4">/Walkthrough: LGDroid Android Forensics Lab</h1>
+
+          <div class="article-content">
+            🗓️ 12 April 2024 👻 Yusuf Amr
+
+            <img src="./assets/LGDroid_Android_Forensics_Lab/background.png" alt="Description of the image" >
+            <span class="highlight">Given Scenario:</span>
+
+“Our IR team took a disk dump of the android phone. As a soc analyst, analyze the dump and answer the provided questions.”
+
+<a href="https://cyberdefenders.org/blueteam-ctf-challenges/lgdroid" target="_blank">https://cyberdefenders.org/blueteam-ctf-challenges/lgdroid</a>
+
+<img src="./assets/LGDroid_Android_Forensics_Lab/1.png" alt="Description of the image" >
+<span class="highlight">Q1 Answer:</span>
+
+Download the Files: Before we begin, let’s download the necessary files. We’ll be working with these files throughout the process. Exploring the Structure: Now, let’s take a closer look at the downloaded files to understand where to find the information we need. This will give us a roadmap for locating the specific requirements.
+
+To find email addresses, we’ll target the contact database. I’ll be using DB Browser for SQLite to analyze its contents.
+
+The Agent Data directory contains a SQLite database named “Contacts3.db”
+           <img src="./assets/LGDroid_Android_Forensics_Lab/2.png" alt="Description of the image" >
+<span class="highlight">Q2 Answer:</span>
+
+This one is straight forward too
+         <img src="./assets/LGDroid_Android_Forensics_Lab/3.png" alt="Description of the image" >
+         <img src="./assets/LGDroid_Android_Forensics_Lab/4.png" alt="Description of the image" >
+<span class="highlight">Q3 Answer:</span>
+
+The Agent Data folder contains a SQLite database named “downloads.db”
+<img src="./assets/LGDroid_Android_Forensics_Lab/5.png" alt="Description of the image" >
+<img src="./assets/LGDroid_Android_Forensics_Lab/6.png" alt="Description of the image" >
+
+To convert the time, we will be using the following website:
+
+<a href="https://www.epochconverter.com" target="_blank">https://www.epochconverter.com</a>
+
+<img src="./assets/LGDroid_Android_Forensics_Lab/7.png" alt="Description of the image" >
+<span class="highlight">Q4 Answer:</span>
+
+Another technique involves using grep with the following arguments:
+
+    -r: This option tells grep to search recursively within directories. It will search the current directory and all subdirectories for matching files.
+    -l: This option instructs grep to only list the filenames containing the pattern. It won’t display the actual matching lines within the files.
+    -i: This option makes the search case-insensitive.
+
+So this will help us for text searching in files.
+
+For example i want to find files that have reset word and related to any battery file:
+<img src="./assets/LGDroid_Android_Forensics_Lab/8.png" alt="Description of the image" >
+<img src="./assets/LGDroid_Android_Forensics_Lab/9.png" alt="Description of the image" >
+Now that we’ve identified a reset time mentioned in the text file, let’s go back and examine the surrounding context for further insights.
+<img src="./assets/LGDroid_Android_Forensics_Lab/10.png" alt="Description of the image" >
+we will notice the battery has status when it was 0%, charging and full at the bottom as shown:
+<img src="./assets/LGDroid_Android_Forensics_Lab/11.png" alt="Description of the image" >
+<img src="./assets/LGDroid_Android_Forensics_Lab/12.png" alt="Description of the image" >
+Here it took 5 minutes and 1 second till fully charging.
+
+So, the answer would be: 13:12:19 + 00:05:01 = 13:17:20
+
+<span class="highlight">Q5 Answer:</span>
+
+This one is hard and I did little bit research to solve it, here’s how:
+
+Firstly, I wanted to get the WIFI information by doing the below but couldn’t get the password:
+<img src="./assets/LGDroid_Android_Forensics_Lab/13.png" alt="Description of the image" >
+Found two possible locations for the password as shown:
+
+<a href="https://stackoverflow.com/questions/14964305/where-does-android-store-system-settings-such-as-wifi-networks" target="_blank">https://stackoverflow.com/questions/14964305/where-does-android-store-system-settings-such-as-wifi-networks</a>
+
+<img src="./assets/LGDroid_Android_Forensics_Lab/14.png" alt="Description of the image" >
+So it’s somewhere in Data Path and here found the following:
+<img src="./assets/LGDroid_Android_Forensics_Lab/15.png" alt="Description of the image" >
+By unzipping it, found the a similar paths to the second possible location:
+<img src="./assets/LGDroid_Android_Forensics_Lab/16.png" alt="Description of the image" >
+<img src="./assets/LGDroid_Android_Forensics_Lab/17.png" alt="Description of the image" >
+By opening it with VIM:
+<img src="./assets/LGDroid_Android_Forensics_Lab/18.png" alt="Description of the image" >
+Great! We here were able to find the WIFI name but I wasn’t sure which is the password, so by searching about WPA_PSK so as to understand its mechanism and decide which is the password from what we found.
+<img src="./assets/LGDroid_Android_Forensics_Lab/19.png" alt="Description of the image" >
+<a href="https://www.techopedia.com/definition/22921/wi-fi-protected-access-pre-shared-key-wpa-psk" target="_blank">https://www.techopedia.com/definition/22921/wi-fi-protected-access-pre-shared-key-wpa-psk</a>
+
+<img src="./assets/LGDroid_Android_Forensics_Lab/20.png" alt="Description of the image" >
+So from this we can conclude that the password is the PreSharedKey.
+
+<span class="highlight">Q6 Answer:</span>
+
+Let’s use the grep:
+<img src="./assets/LGDroid_Android_Forensics_Lab/21.png" alt="Description of the image" >
+Here the mentioned date appears at these files and by searching at them, we find:
+<img src="./assets/LGDroid_Android_Forensics_Lab/22.png" alt="Description of the image" >
+<span class="highlight">Q7 Answer:</span>
+
+Again using grep:
+<img src="./assets/LGDroid_Android_Forensics_Lab/23.png" alt="Description of the image" >
+total time isn’t the answer and the hint shows that we should focus on the difference between the foreground of background time: 22:47:57 – 14:13:27
+
+<span class="highlight">Q8 Answer:</span>
+
+We find the original image after unzipping sdcard then DCIM then Camera directory. The purpose of the question to SSIM which is an important metric for image similarity and it can be helpful to detect image forgery or potential manipulation.
+
+By using the code provided in the hint: <a href="https://ourcodeworld.com/articles/read/991/how-to-calculate-the-structural-similarity-index-ssim-between-two-images-with-python" target="_blank">https://ourcodeworld.com/articles/read/991/how-to-calculate-the-structural-similarity-index-ssim-between-two-images-with-python</a>
+
+<img src="./assets/LGDroid_Android_Forensics_Lab/24.png" alt="Description of the image" >
+<img src="./assets/LGDroid_Android_Forensics_Lab/25.png" alt="Description of the image" >
+
+            
+          </div>
+        </section>
+      </main>
+    </v-app>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+
+    function goBack() {
+      window.history.back();
+  }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+</body>
+</html>

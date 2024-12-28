@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>/AWS Breach Hunting: Investigating Security Incidents in the Cloud with AWS CloudTrail (Pwned Labs)</title>
+
+  <link rel="stylesheet" href="./../styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <button class="back-button" onclick="goBack()">&larr; cd ..</button>
+
+      <main class="container">
+        <section>
+          <h1 class="display-4">/AWS Breach Hunting: Investigating Security Incidents in the Cloud with AWS CloudTrail (Pwned Labs)</h1>
+
+          <div class="article-content">
+            🗓️ 25 May 2024 👻 Yusuf Amr 
+            
+            <img src="./assets/AWS_breach_hunting/aws-security-1.png" alt="Description of the image" >
+            Hey there! I’m Yusuf Amr, your go-to cybersecurity analyst and a certified AWS Cloud Solutions Architect. Excited to dive into this Blue Team exercise with you. Together, we’ll navigate through a simulated security incident investigation using AWS CloudTrail logs from <a href="https://pwnedlabs.io/labs/breach-in-the-cloud" target="_blank">https://pwnedlabs.io/labs/breach-in-the-cloud</a>.
+            
+            <span class="highlight">Scenario</span>
+            
+            We’ve been alerted to a potential security incident. The Huge Logistics security team have provided you with AWS keys of an account that saw unusual activity, as well as AWS CloudTrail logs around the time of the activity. We need your expertise to confirm the breach by analyzing our CloudTrail logs, identifying the compromised AWS service and any data that was exfiltrated.
+            
+            <span class="highlight">Understanding AWS CloudTrail Logs:</span>
+            
+            - CloudTrail records API activity within your AWS account, providing vital details about each action.
+            - Logs include information like user, service used, action performed, and response elements.
+            - CloudTrail logs are in JSON format, containing fields like eventTime, eventName, userIdentity, and more.
+            - Each record represents a single API call made to AWS.
+            
+            You can read more about CloudTrail <a href="https://aws.amazon.com/cloudtrail/faqs/" target="_blank">https://aws.amazon.com/cloudtrail/faqs/</a>.
+            
+            <span class="highlight">Initial Investigation:</span>
+          
+            - Unzipping Logs and Formatting: We start by downloading and unzipping the CloudTrail logs provided by the lab. The provided code snippet helps convert the logs into a more readable format using jq.
+            
+            for file in *.json; do jq . "$file" > "$file.tmp" && mv "$file.tmp" "$file"; done
+
+            <img src="./assets/AWS_breach_hunting/ls.png" alt="Description of the image" >
+            Understanding Log Structure: By examining the logs, we identify key fields like eventTime, eventName, and userIdentity.arn. This helps us understand what each record signifies.
+
+            <img src="./assets/AWS_breach_hunting/log_structure.png" alt="Description of the image" >
+            Identifying Suspicious Activity:
+            
+            - Listing Users: We begin by listing all users within the logs. This provides a starting point for further investigation.
+            
+            I used this grep to list the users:
+
+            <img src="./assets/AWS_breach_hunting/grep.png" alt="Description of the image" >
+            Grep vs. jq for User Extraction: While grep can be used for basic searches, it’s not ideal for complex JSON structures. We leverage jq, a powerful tool specifically designed for processing JSON data, for more efficient and accurate user extraction.
+            
+            
+            -> jq -r '.Records[].userIdentity.arn' *.json | sort | uniq
+
+            <img src="./assets/AWS_breach_hunting/jq.png" alt="Description of the image" >    
+            The temp-user and AdminRole are suspcious because the AssumeRole operation allows an IAM user, or an AWS service, to assume a role temporarily to access AWS resources. The AdminRole is a role with administrative privileges within AWS environment.
+            
+            
+            Well, now I can begin by investigating the activity of each user, or we could use errors as the starting point for our investigation.
+            <img src="./assets/AWS_breach_hunting/error.png" alt="Description of the image" >      
+            grep -H enables us to determine which file contains the matching line. Consequently, we’ve located the file exhibiting suspicious activity associated with ‘tempuser’.
+            
+            Now we have 2 main errors:
+            
+            First one:
+
+            <img src="./assets/AWS_breach_hunting/first_error.png" alt="Description of the image" >    
+            The fact that the root account was used can be a red flag. Best practices recommend minimizing the use of the root account and instead using IAM users or roles with the least privilege necessary.
+            
+            If the root account is being used for routine operations, it might be a sign of poor security practices.
+            
+            Second error:
+
+            <img src="./assets/AWS_breach_hunting/second_error_1.png" alt="Description of the image" >    
+            <img src="./assets/AWS_breach_hunting/second_error_2.png" alt="Description of the image" >    
+            A temporary user attempting to list everything, which indeed constitutes malicious activity (enumeration).
+            
+            <span class="highlight"></span>Investigating Temp User Activity:</span>
+            
+            -> jq -r '.Records[] | select(.userIdentity.arn == "arn:aws:iam::107513503799:user/temp-user") | [.eventTime, .eventName, .sourceIPAddress]' *.json 
+            <img src="./assets/AWS_breach_hunting/temp_user_activity.png" alt="Description of the image" >    
+
+            GetCallerIdentity is like the whoami command in AWS.
+            
+            the last activity was creating the assume Role we suspected before at 2023-08-26T20:54:28Z
+            
+            <img src="./assets/AWS_breach_hunting/activity_time.png" alt="Description of the image" >    
+            Then, searching for the AssumeRole activity:
+            
+            <img src="./assets/AWS_breach_hunting/assume_role_activity.png" alt="Description of the image" >    
+            <img src="./assets/AWS_breach_hunting/ip.png" alt="Description of the image" > 
+            We also have clean IP addresses, but as we can see, they are in the same subnet and the same country:
+
+            <img src="./assets/AWS_breach_hunting/ip_location.png" alt="Description of the image" >    
+            And this technique is called “IP hopping or rotation”. It involves using a large pool of IP addresses, often from the same subnet or range, to send requests. The purpose is to avoid detection or blocking by systems that may be monitoring for suspicious activity from a single IP address.
+            
+            After investigating the AdminRole activity, we identified that data was exfiltrated as the attacker was able to retrieve and transfer the file ’emergency.txt’:
+            <img src="./assets/AWS_breach_hunting/emergency.png" alt="Description of the image" >    
+
+          </div>
+        </section>
+      </main>
+    </v-app>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+
+    function goBack() {
+      window.history.back();
+  }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+</body>
+</html>

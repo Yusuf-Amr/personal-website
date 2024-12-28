@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>/Email Sender Validation Tool</title>
+
+  <link rel="stylesheet" href="./../styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <button class="back-button" onclick="goBack()">&larr; cd ..</button>
+
+      <main class="container">
+        <section>
+          <h1 class="display-4">/Email Sender Validation Tool</h1>
+
+          <div class="article-content">
+            🗓️ 11 July 2024 👻 Yusuf Amr 
+            
+            <img src="./assets/email_sender_validation_tool/email-sender-validationm.png" alt="Description of the image" >
+            Excited to share a tool I built to simplify part of the email analysis for security analysts! This tool facilitates the validation of email senders and enhances the identification of potential phishing attempts, helping you to make informed decisions regarding email legitimacy.
+
+            This Python script provides a set of tools for analyzing email-related data including SPF, DMARC, VirusTotal Domain and IP reputation, WHOIS information, and more. It’s designed to assist SOC (Security Operations Center) analysts in quickly assessing the legitimacy and potential risks associated with email communications.
+            
+            Explore it on GitHub: <a href="https://github.com/Yusuf-Amr/email-sender-validation" target="_blank">https://github.com/Yusuf-Amr/email-sender-validation</a>
+
+            <span class="highlight">Features</span>
+            
+            - SPF Check: Validates the Sender Policy Framework (SPF) records for a domain against an IP and sender email address.
+            - VirusTotal Check: Retrieves domain-related and IP data from VirusTotal API including last DNS records, categories, and security scan results.
+            - WHOIS Lookup: Fetches WHOIS information for a domain to ascertain ownership and registration details.
+            - DMARC Check (Optional): Retrieves DMARC records for a domain.
+            
+            <span class="highlight">Usage VirusTotal API Key Setup:</span>
+            
+          - When you run the script for the first time, it will prompt you to enter your VirusTotal API key.
+          - The API key will be automatically saved in api_key.txt and will not prompt for it again in future runs.
+          - To change the API key, update it directly in api_key.txt.
+            
+          <span class="highlight">Requirements</span>
+            
+            - Python 3.x
+            - Libraries:
+            - colorama
+            - requests
+            - whois
+            - dns.resolver
+            - spf
+            
+            <span class="highlight">Installation</span>
+            
+            Clone the repository:
+            
+            -> git clone https://github.com/Yusuf-Amr/email-sender-validation.git
+            
+            Install dependencies:
+            
+            -> pip install -r requirements.txt
+            
+            Run the script:
+            
+            -> python main.py
+          
+            <span class="highlight">Demo</span>  
+            <span class="highlight">Real World Phishing Example:</span>
+            
+            Source: <a href="https://x.com/phishunt_io/status/1780834586106167631" target="_blank">https://x.com/phishunt_io/status/1780834586106167631</a>
+
+            
+               Below is a real world scenario demonstrating how the tool can identify a phishing attempt:
+            
+               The sender email address appears to be from “bpg-microsoft(.)com” attempting to spoof the legitimate Microsoft domain (microsoft.com). The sender IP address is 217.160.14.242.
+
+            <img src="./assets/email_sender_validation_tool/phishing-example.png" alt="Description of the image" >
+            <img src="./assets/email_sender_validation_tool/1.png" alt="Description of the image" >
+            <img src="./assets/email_sender_validation_tool/2.png" alt="Description of the image" >  
+            <img src="./assets/email_sender_validation_tool/3.png" alt="Description of the image" >
+
+
+          </div>
+        </section>
+      </main>
+    </v-app>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+
+    function goBack() {
+      window.history.back();
+  }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+</body>
+</html>

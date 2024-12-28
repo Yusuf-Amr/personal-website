@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>/Email Generator Tool</title>
+
+  <link rel="stylesheet" href="./../styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <button class="back-button" onclick="goBack()">&larr; cd ..</button>
+
+      <main class="container">
+        <section>
+          <h1 class="display-4">/Email Generator Tool</h1>
+
+          <div class="article-content">
+            🗓️ 13 July 2024 👻 Yusuf Amr
+            
+            <img src="./assets/email_generator_tool/email-generator-tool.png" alt="Description of the image" >
+            I wanted to share a tool that I’ve created and really enjoy using. It’s not highly technical, but it’s incredibly useful and very simple. This tool automates the creation of standardized email templates. It simplifies writing repetitive emails by allowing you to input essential details, ensuring accuracy and saving time, and here’s why i find it beneficial too:
+
+            • Writing routine emails can be time-consuming, especially when each email requires specific data such as dates, IP addresses, port numbers, and other essential details.
+            • Missing these details or misspelling words can lead to misunderstandings or incomplete communication. So, this would automates the creation of email templates, speeding up the process and reducing the likelihood of missing important information or the spelling and grammatical mistakes.
+            • In situations requiring rapid response, the speed of communication and containment is crucial.
+            • It helps new candidates adapt quickly to the email format of your organization and avoid mistakes.    
+            This tool is not limited to this field of cybersecurity but can be adapted and customized for various fields.
+            
+            Feel free to download and modify it according to your specific needs. Make sure to provide the email templates first in the code.
+            
+            <span class="highlight">Installation</span>
+            Clone the repository:
+            -> git clone https://github.com/Yusuf-Amr/Email-Generator.git
+            -> cd Email-Generator
+            <span class="highlight">Usage</span>
+            Run the main script to generate email templates:
+            -> python3 main.py
+            
+            Follow the prompts to select the type of email template you want to generate and enter the required information.
+            <span class="highlight">Demo</span>
+            Check this:<a href="https://www.linkedin.com/posts/yusuf-amr_cybersecurity-informationsecurity-soc-activity-7217860684196282368-8zKh?utm_source=share&utm_medium=member_desktop" target="_blank">https://www.linkedin.com/posts/yusuf-amr_cybersecurity-informationsecurity-soc-activity-7217860684196282368-8zKh?utm_source=share&utm_medium=member_desktop</a>
+           
+            Explore it on Github: <a href="https://github.com/Yusuf-Amr/Email-Generator" target="_blank">https://github.com/Yusuf-Amr/Email-Generator</a>
+
+            Wishing you find it useful!
+          </div>
+        </section>
+      </main>
+    </v-app>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+
+    function goBack() {
+      window.history.back();
+  }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+</body>
+</html>
