@@ -53,6 +53,7 @@ To set up OpenWebUI, I used an Ubuntu virtual machine running on VirtualBox. Bel
         python3 -m venv myenv
         source myenv/bin/activate
         pip install open-webui
+        deactivate
     </code></pre>
         Installed OpenWebUI inside the virtual environment using python 3.11 and for the model we will use python 3.12 outside the virtual environment.
 
@@ -60,7 +61,6 @@ To set up OpenWebUI, I used an Ubuntu virtual machine running on VirtualBox. Bel
 
     To integrate Meta’s Llama 3 2B model, Installed the model outside the virtual environment and switched back to Python 3.12:
         <pre><code>
-        deactivate
         sudo ln -sf /usr/bin/python3.12 /usr/bin/python3
         curl -fsSL https://ollama.com/install.sh | sh
         ollama run llama3:8b
