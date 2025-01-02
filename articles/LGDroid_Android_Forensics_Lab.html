@@ -133,11 +133,15 @@ By using the code provided in the hint: <a href="https://ourcodeworld.com/articl
 
   <!-- Scripts -->
   <script>
-
     function goBack() {
-      window.history.back();
-  }
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'https://yusufamr.com/';  // Redirect to the home page
+      }
+    }
   </script>
+  
   <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 </body>
